@@ -1,0 +1,11 @@
+﻿@model List<VendingMachineKata.Models.Product>
+@{
+    ViewBag.Title = "GetProducts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using VendingMachineKata.Models;
+
+@foreach (Product p in @Model)
+{
+    <h2>@p.ProductName, @p.ProductPrice, @p.ProductCount</h2>
+}
