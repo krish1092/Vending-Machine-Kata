@@ -10,6 +10,8 @@ namespace VendingMachineKata.Models
 	{
         public string ProductName { get; set; }
         public double ProductPrice { get; set; }
+
+        [DataType(DataType.Currency)]
         public int ProductCount { get; set; }
 
         public string DisplayProduct
@@ -22,9 +24,9 @@ namespace VendingMachineKata.Models
 
         public Product (string name, double price, int count)
         {
-            this.ProductName = name;
-            this.ProductPrice = price;
-            this.ProductCount = count;
+            ProductName = name;
+            ProductPrice = price;
+            ProductCount = count;
         }
     }
 }
