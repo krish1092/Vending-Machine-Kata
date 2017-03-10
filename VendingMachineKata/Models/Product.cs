@@ -18,7 +18,7 @@ namespace VendingMachineKata.Models
         {
             get
             {
-                return string.Format("{0} {1}", ProductName, ProductPrice);
+                return string.Format("{0}:{1}", ProductName, ProductPrice);
             }
         }
 
@@ -29,4 +29,7 @@ namespace VendingMachineKata.Models
             ProductCount = count;
         }
     }
+
+
+    //Other Code
 }
