@@ -5,7 +5,16 @@
 }
 @using VendingMachineKata.Models;
 
-@foreach (Product p in @Model)
-{
-    <h2>@p.ProductName, @p.ProductPrice, @p.ProductCount</h2>
-}
+
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+
+
+        @foreach (Product p in @Model)
+        {
+            <h2>@p.ProductName, @p.ProductPrice, @p.ProductCount</h2>
+        }
+    </div>
+</div>
