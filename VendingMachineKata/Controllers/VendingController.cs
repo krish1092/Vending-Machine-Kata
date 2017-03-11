@@ -30,7 +30,6 @@ namespace VendingMachineKata.Controllers
         [HttpGet]
         public string RefillVendingMachine()
         {
-
             VendingService.RefillVendingMachine();
             return "The vending machine has been refilled";
         }
