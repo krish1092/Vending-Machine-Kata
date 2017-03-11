@@ -80,12 +80,12 @@ namespace VendingMachineKata.Service
         /// Add the inserted coins to the existing pool of coins
         /// </summary>
         /// <param name="coinsInserted"></param>
-        public static void AddToExistingChange(double[] coinsInserted)
+        public static void AddToExistingChange(Coin[] coinsInserted)
         {
             //The customer has inserted a few coins as well. Add them to the pool of coins that already exist and then tender change
-            foreach (double coinValue in coinsInserted)
+            foreach (Coin Coin in coinsInserted)
             {
-                CoinValues[coinValue]++; //Increment the corresponding coin value
+                AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, Coin)).First().Count++; //Increment the corresponding coin value
             }
             
         }
