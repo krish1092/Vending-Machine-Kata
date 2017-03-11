@@ -31,46 +31,6 @@ namespace VendingMachineKata.Service
             { 0.05 , 10}
         };
 
-        /*
-        /// <summary>
-        /// The algorithm goes from quarters to nickels. Tries to give as many quarters,dimes, nickels(in this order) as possible
-        /// </summary>
-        /// <param name="RemainingAmount"></param>
-        /// <returns></returns>
-        public static double TenderChange(double RemainingAmount){
-
-            foreach (double coinValue in CoinValues.Keys)
-            {
-                //Number of coins for the current coin value
-                int n = (int)(RemainingAmount / coinValue);
-
-                int i = 0;
-
-                //n > 0 only if the remaining Amount is greater than coin value
-                if (n > 0)
-                {
-                    //Eg: This check ensures that the maximum number of coins <=n are subtracted without the coin count running negative.
-                    while (CoinValues[coinValue] > 0 && i < n)
-                    {
-                        i++;
-                        CoinValues[coinValue]--;
-                        RemainingAmount = RemainingAmount - coinValue; //Subtract the amount taken off
-                    }
-                }
-
-               
-                if (RemainingAmount == 0)
-                    return 0; //Return 0 indicating that the amount to be tendered has been fulfilled.
-                
-            }
-            return RemainingAmount; //Vending machine unable to tender this change
-        }
-
-    */
-
-
-
-
         /// <summary>
         /// The algorithm goes from quarters to nickels. Tries to give as many quarters,dimes, nickels(in this order) as possible
         /// </summary>
