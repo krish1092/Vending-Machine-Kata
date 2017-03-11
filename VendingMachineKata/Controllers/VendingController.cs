@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using VendingMachineKata.Models;
 using VendingMachineKata.Service;
+
 
 namespace VendingMachineKata.Controllers
 {
@@ -38,12 +40,15 @@ namespace VendingMachineKata.Controllers
             return PartialView();
         }
 
+        /// <summary>
+        /// Refill the vending machine
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public string RefillVendingMachine()
         {
-            foreach(Product p in ListOfProducts)
-                p.ProductCount = 10;
 
+            VendingService.RefillVendingMachine();
             return "The vending machine has been refilled";
         }
 
@@ -58,10 +63,18 @@ namespace VendingMachineKata.Controllers
 
         // POST : Product/Vending
         [HttpPost]
-        public string CompleteVending()
+        public JsonResult CompleteVending(double[] CoinsInserted, string ProductName, double RemainingAmount)
         {
-            VendingService s = new VendingService();
-            return "Completed";
+            //Add inserted coins to the existing pool of coins
+            VendingService.AddToExistingChange(CoinsInserted);
+
+            //Subtract Product Count
+            VendingService.SubtractProductCount(ProductName);
+
+            //Tender the change;
+            RemainingAmount = VendingService.TenderChange(RemainingAmount);
+
+            return Json(RemainingAmount);
         }
     }
 }
