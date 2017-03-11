@@ -81,13 +81,18 @@ function vend() {
     vendingDisplay(remainingBalance);
 
     //Ajax Call
-    $.post('', { insertedCoins: coinsAdded, totalSum : coinSum })
-        .done(function (response) {
-            $('#id').html(response);
 
-        });
+    if (remainingBalance >= 0) {
+            $.post('', { insertedCoins: coinsAdded, totalSum : coinSum })
+                     .done(function (response) {
+                        $('#console').html(response);
 
+    });
 
+    }
+    else {
+        updateCustomMessage('', 'Please tender the full amount');
+    }
 }
 
 
@@ -104,15 +109,11 @@ function validateCoin(insertedCoin) {
     return null;
 }
 
+// Refill Vending Machine
+function refillVendingMachine() {
+    $.post('', { insertedCoins: coinsAdded, totalSum: coinSum })
+                     .done(function (response) {
+                         $('#console').html(response);
 
-
-
-//Validate Coins
-/*function validateCoin(coinValue){
-  for(var coin in listOfAcceptedCoins){
-    
-    if(coinValue == listOfAcceptedCoins[coin]) //Coin Value matches our list of accepted coins
-        return true;
-  }
-  return false;
-}*/
+                     });
+}

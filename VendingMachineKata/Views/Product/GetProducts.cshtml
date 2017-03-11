@@ -9,19 +9,48 @@
 
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-
-
-        @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "product-count" })) {
-
-
-
-            @foreach (Product p in @Model)
-            {
+      
+         @foreach (Product p in @Model)
+         {
+            <div class="row">
                 <h2>@p.DisplayProduct</h2>
+                <button onclick="vend()" class="btn-primary" value="Select"></button>
+            </div>
+         }
+
+
+     </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+       <div class="row">
+            <span id="console"> Insert Coin</span>
+       </div> 
+
+        <div class="row">
+            <select id="coin-select">
+                @foreach (Coin c in @Model)
+                {
+
+                
+                <option value="0.75"></option>
+                <option></option>
+                <option></option>
                 }
-        }
-       
+            </select>
+        </div> 
+
+        <div class="row">
+            <span id="console"> Insert Coin</span>
+        </div> 
+
+        <div class="row">
+            <span id="console"> Insert Coin</span>
+        </div> 
+        
+        
+
     </div>
+
 </div>
 
 
