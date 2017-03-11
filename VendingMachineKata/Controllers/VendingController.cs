@@ -23,27 +23,38 @@ namespace VendingMachineKata.Controllers
             return PartialView();
         }
 
-        /// <summary>
-        /// Refill the vending machine
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public string RefillVendingMachine()
-        {
-            VendingService.RefillVendingMachine();
-            return "The vending machine has been refilled";
-        }
+        
 
 
 
         // GET: Product/GetProducts
         public ActionResult GetProducts()
         {
-            return View(VendingService.GetProductList());
+            return PartialView(VendingService.GetProductList());
+        }
+
+
+        /// <summary>
+        /// Refill the vending machine
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult RefillVendingMachine()
+        {
+            VendingService.RefillVendingMachine();
+            return Json("The vending machine has been refilled");
         }
 
 
         // POST : VendingMachine/Complete
+        /// <summary>
+        /// This method completes the vending process by adding the inserted coins to the existing coin pool ,subtracting the product count and 
+        /// tenders the change
+        /// </summary>
+        /// <param name="CoinsInserted"></param>
+        /// <param name="ProductName"></param>
+        /// <param name="RemainingAmount"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult CompleteVending(double[] CoinsInserted, string ProductName, double RemainingAmount)
         {

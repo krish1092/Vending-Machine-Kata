@@ -10,11 +10,19 @@ namespace VendingMachineKata.Service
     {
 
         //For getting the list of products
-        private static Dictionary<string,Product> ProductDictionary = new Dictionary<string, Product>(){
+        private static Dictionary<string, Product> ProductDictionary = new Dictionary<string, Product>(){
             {"Cola", new Product("Cola", 1.00, 10) },
             {"Chips", new Product("Chips", 0.50, 10) },
             {"Candy", new Product("Candy", 0.65, 10) }
         };
+
+        //For Validating coins & Tendering Change- Dictionary holds the mapping of a coin and its value; Note that, the Coin Class by itself does not know the Coin's value
+        private static Dictionary<Coin, double> AcceptedCoinsDictionary = new Dictionary<Coin, double> {
+            { new Coin {Size = 3, Weight = 20, Count = 10}, 0.25 },
+            { new Coin {Size = 1, Weight = 5, Count = 10}, 0.10 },
+            { new Coin {Size = 2, Weight = 10, Count = 10}, 0.05 }
+        };
+
 
         //For Tendering change as required
         private static Dictionary<double, int> CoinValues = new Dictionary<double, int> {
@@ -23,7 +31,7 @@ namespace VendingMachineKata.Service
             { 0.05 , 10}
         };
 
-
+        /*
         /// <summary>
         /// The algorithm goes from quarters to nickels. Tries to give as many quarters,dimes, nickels(in this order) as possible
         /// </summary>
@@ -57,6 +65,55 @@ namespace VendingMachineKata.Service
             }
             return RemainingAmount; //Vending machine unable to tender this change
         }
+
+    */
+
+
+
+
+        /// <summary>
+        /// The algorithm goes from quarters to nickels. Tries to give as many quarters,dimes, nickels(in this order) as possible
+        /// </summary>
+        /// <param name="RemainingAmount">The remaining amount to be tendered to the user</param>
+        /// <returns></returns>
+        
+        public static double TenderChange(double RemainingAmount)
+        {
+
+            foreach (Coin coin in AcceptedCoinsDictionary.Keys)
+            {
+
+                double CoinValue = AcceptedCoinsDictionary[coin];
+
+                //Number of coins for the current coin value
+                int n = (int)(RemainingAmount / CoinValue);
+
+                int i = 0;
+
+                //n > 0 only if the remaining Amount is greater than coin value
+                if (n > 0)
+                {
+                    //Eg: This check ensures that the maximum number of coins <=n are subtracted without the coin count running negative.
+                    while (coin.Count > 0 && i < n)
+                    {
+                        i++;
+                        coin.Count--;
+                        RemainingAmount = RemainingAmount - CoinValue; //Subtract the amount taken off
+                    }
+                }
+
+
+                if (RemainingAmount == 0)
+                    return 0; //Indicates that the amount to be tendered has been fulfilled.
+
+            }
+            return RemainingAmount; //Vending machine unable to tender this change
+        }
+
+
+
+
+
 
 
         /// <summary>
@@ -100,6 +157,17 @@ namespace VendingMachineKata.Service
                 ProductDictionary[productName].ProductCount = 10;
 
             
+        }
+
+
+
+        public static bool ValidateInsertedCoins(Coin[] coins)
+        {
+            foreach(Coin coin in coins)
+            {
+                
+            }
+            return false;
         }
         
     }

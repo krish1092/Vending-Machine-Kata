@@ -10,18 +10,18 @@ var remainingBalance = 0; //For transactions
 
 //Accepted coins
 var listOfAcceptedCoins = {
-    quarter: { weight: 25, size: 3, value: 0.25 },
-    dime: { weight: 10, size: 1, value: 0.10 },
-    nickel: { weight: 5, size: 2, value: 0.05 }
+    quarter: { weight: 20, size: 3, value: 0.25 },
+    dime: { weight: 5, size: 1, value: 0.10 },
+    nickel: { weight: 10, size: 2, value: 0.05 }
 }
 
 //Update display based on the current state of transaction
 function updateDisplay() {
 
     if (coinInserted)
-        document.getElementById('coin-display').innerHTML = 'You have inserted' + numberOfCoins + 'coins amounting to $' + coinSum;
+        updateCustomMessage('You have inserted' + numberOfCoins + 'coins amounting to $' + coinSum);
     else
-        document.getElementById('coin-display').innerHTML = 'Please Insert Coins';
+        updateCustomMessage('Please Insert Coins');
 
 }
 
@@ -61,17 +61,17 @@ function insertCoin(insertedCoin) {
 function vendingDisplay(remainingBalance) {
 
     if (remainingBalance === 0)
-        updateCustomMessage('remaining-balance', 'You have tendered the exact change. Thank you!');
+        updateCustomMessage('You have tendered the exact change. Thank you!');
     if (remainingBalance > 0)
-        updateCustomMessage('remaining-balance', 'Please collect a return of $' + remainingBalance + 'Thank you!');
+        updateCustomMessage('Please collect a return of $' + remainingBalance + 'Thank you!');
     if (remainingBalance < 0)
-        updateCustomMessage('remaining-balance', 'You need to pay $' + remainingBalance + 'more');
+        updateCustomMessage('You need to pay $' + remainingBalance + 'more');
 
 }
 
 
-function updateCustomMessage(id, message) {
-    document.getElementById(id).innerHTML = message;
+function updateCustomMessage(message) {
+    document.getElementById('console').innerHTML = message;
 }
 
 //Calculate Balance
@@ -91,7 +91,7 @@ function vend() {
 
     }
     else {
-        updateCustomMessage('', 'Please tender the full amount');
+        updateCustomMessage('Please tender the full amount');
     }
 }
 
