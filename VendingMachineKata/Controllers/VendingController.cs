@@ -42,7 +42,7 @@ namespace VendingMachineKata.Controllers
         public JsonResult RefillVendingMachine()
         {
             VendingService.RefillVendingMachine();
-            return Json("The vending machine has been refilled");
+            return Json(new { Message = "The vending machine has been refilled" });
         }
 
 
@@ -54,20 +54,28 @@ namespace VendingMachineKata.Controllers
         /// <param name="CoinsInserted"></param>
         /// <param name="ProductName"></param>
         /// <param name="RemainingAmount"></param>
-        /// <returns></returns>
+        /// <returns>A jsonresult containing the result of validation and remaining amount</returns>
+
         [HttpPost]
-        public JsonResult CompleteVending(double[] CoinsInserted, string ProductName, double RemainingAmount)
+        public JsonResult CompleteVending(Coin[] CoinsInserted, string ProductName, double RemainingAmount)
         {
-            //Add inserted coins to the existing pool of coins
-            VendingService.AddToExistingChange(CoinsInserted);
+            //Validate the coins
+            bool Validated = VendingService.ValidateInsertedCoins(CoinsInserted);
+            
+            if (Validated)
+            {
+                //Add inserted coins to the existing pool of coins
+                VendingService.AddToExistingChange(CoinsInserted);
 
-            //Subtract Product Count
-            VendingService.SubtractProductCount(ProductName);
+                //Subtract Product Count
+                VendingService.SubtractProductCount(ProductName);
 
-            //Tender the change;
-            RemainingAmount = VendingService.TenderChange(RemainingAmount);
-
-            return Json(RemainingAmount);
+                //Tender the change;
+                RemainingAmount = VendingService.TenderChange(RemainingAmount);
+            }
+            
+            //It does not carry any sensitive information - So we can allow get.
+            return Json(new { RemainingAmount = RemainingAmount, Validated = Validated }, JsonRequestBehavior.AllowGet);
         }
     }
 }

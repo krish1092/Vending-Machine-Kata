@@ -99,9 +99,9 @@ namespace VendingMachineKata.Service
         /// <param name="product"></param>
         public static void RefillVendingMachine()
         {
+            //Refilling Products
             foreach (string productName in ProductDictionary.Keys)
                 ProductDictionary[productName].ProductCount = 10;
-
             
         }
 
@@ -120,6 +120,6 @@ namespace VendingMachineKata.Service
             }
             return true;
         }
-        
+
     }
 }
