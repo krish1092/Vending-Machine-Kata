@@ -14,8 +14,8 @@ namespace VendingMachineKata.Models
         /// <summary>
         /// Comparing two differnt coin objects
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="x">Parameter 1</param>
+        /// <param name="y">Paramter 2</param>
         /// <returns></returns>
         public bool Equals(Coin x, Coin y)
         {

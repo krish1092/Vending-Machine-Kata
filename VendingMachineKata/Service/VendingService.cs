@@ -110,7 +110,6 @@ namespace VendingMachineKata.Service
         /// </summary>
         /// <param name="coins"></param>
         /// <returns></returns>
-
         public static bool ValidateInsertedCoins(Coin[] coins)
         {
             foreach(Coin coin in coins)
