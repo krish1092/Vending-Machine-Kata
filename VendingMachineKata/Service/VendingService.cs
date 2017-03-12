@@ -22,15 +22,7 @@ namespace VendingMachineKata.Service
             { new Coin {Size = 1, Weight = 5, Count = 10}, 0.10 },
             { new Coin {Size = 2, Weight = 10, Count = 10}, 0.05 }
         };
-
-
-        //For Tendering change as required
-        private static Dictionary<double, int> CoinValues = new Dictionary<double, int> {
-            { 0.25 , 10},
-            { 0.10 , 10},
-            { 0.05 , 10}
-        };
-
+        
         /// <summary>
         /// The algorithm goes from quarters to nickels. Tries to give as many quarters,dimes, nickels(in this order) as possible
         /// </summary>
@@ -69,12 +61,6 @@ namespace VendingMachineKata.Service
             }
             return RemainingAmount; //Vending machine unable to tender this change
         }
-
-
-
-
-
-
 
         /// <summary>
         /// Add the inserted coins to the existing pool of coins
@@ -119,15 +105,20 @@ namespace VendingMachineKata.Service
             
         }
 
-
+        /// <summary>
+        /// Backend Validation of inserted Coins
+        /// </summary>
+        /// <param name="coins"></param>
+        /// <returns></returns>
 
         public static bool ValidateInsertedCoins(Coin[] coins)
         {
             foreach(Coin coin in coins)
             {
-                
+                if(AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, coin)).Count() == 0) //If the count is = 0, then coin is not acceptable
+                    return false;
             }
-            return false;
+            return true;
         }
         
     }
