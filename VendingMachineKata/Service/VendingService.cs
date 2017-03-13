@@ -130,7 +130,7 @@ namespace VendingMachineKata.Service
 
 
         /// <summary>
-        /// Get the value
+        /// Get the coin value
         /// </summary>
         /// <param name="coin"></param>
         /// <returns></returns>
@@ -139,6 +139,19 @@ namespace VendingMachineKata.Service
             Coin CoinInTheDictionary = AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, coin)).First();
                     return CoinInTheDictionary == null ? 0 : AcceptedCoinsDictionary[CoinInTheDictionary].Value;
             
+        }
+
+        /// <summary>
+        /// Get the product count value
+        /// </summary>
+        /// <param name="coin"></param>
+        /// <returns></returns>
+        public static int GetProductCount(string ProductName)
+        {
+            if(ProductDictionary.ContainsKey(ProductName))
+                return ProductDictionary[ProductName].ProductCount;
+
+            return 0;
         }
 
 

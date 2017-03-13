@@ -11,19 +11,10 @@ var products = {}; //Will be loaded after page is loaded
 var listOfAcceptedCoins = {}; //Accepted coins
 
 
-//Reset the transaction
-function returnAllCoins() {
-    document.getElementById('collection-area').innerHTML = document.getElementById('collection-area').innerHTML +', ' +'$' + coinSum;
-    reset();
-}
+/*Note: The application has been developed with plain javascript without use of specific libraries 
+    Most of the DOM changes can be handled better with a javascript library like Knockout, Moustache, etc. But the requirements do not specify a library as such.
 
-//Reset the transaction
-function reset() {
-    coinsAdded = [];
-    coinSum = 0;
-    remainingBalance = 0;
-    numberOfCoins = 0;
-}
+*/
 
 
 //Insert Coin
@@ -44,13 +35,13 @@ function insertCoin(insertedCoin) {
             .done(function (response) {
 
                 //Backend validation if user plays smart by editing the javascript file
-                if (CoinValue === 0)
+                if (response.CoinValue === 0)
                     updateCustomMessage('Stop editing javascript - You won\'t get through anyway!');
                 else {
 
-                    coinsAdded.push(insertedCoin);
-                    numberOfCoins++;
-                    coinSum = coinSum + response.CoinValue;
+                    coinsAdded.push(insertedCoin); //Add the coin to the list of coins already there
+                    numberOfCoins++; 
+                    coinSum = coinSum + response.CoinValue; //Total sum of the coins added
 
                     updateCustomMessage('You have inserted' + numberOfCoins + 'coins amounting to $' + coinSum);
                 }
@@ -61,6 +52,20 @@ function insertCoin(insertedCoin) {
         document.getElementById('console').innerHTML('Insert Valid Coin - The ones in the list');
     }
 
+}
+
+
+
+//Validate Coins - Validation happened based on weight and size
+function validateCoin(insertedCoin) {
+
+    for (var coin in listOfAcceptedCoins) {
+
+        if (insertedCoin.Weight == listOfAcceptedCoins[coin].Weight &&
+             insertedCoin.Size == listOfAcceptedCoins[coin].Size) //Coin Value matches our list of accepted coins
+            return true;
+    }
+    return false;
 }
 
 
@@ -77,7 +82,7 @@ function vend(product) {
 
     remainingBalance = coinSum - productCost;
     
-    if (productAvailabilty(productName)) {
+    if (productAvailabilty(productName) == tr) {
 
 
         if (remainingBalance >= 0) {
@@ -85,11 +90,11 @@ function vend(product) {
             //Ajax Call
             $.post('Vending/Complete', { Coins : coinsAdded, totalSum: coinSum, productSelected: productName })
                          .done(function (response) {
-                             if (response.Validated == true && response.RemainingAmount > 0) {
+                             if (response.Validated == true && response.RemainingAmount > 0) { //No sufficient change
                                  document.getElementById('console').innerHTML = 'I don\'t have sufficient change. please tender exact change';
                                  returnAllCoins();
                              }
-                             else if (response.Validated == false){
+                             else if (response.Validated == false){ // Coin Validation Fails
 
                                  document.getElementById('console').innerHTML = 'Please tender valid coins';
                                  returnAllCoins();
@@ -104,7 +109,6 @@ function vend(product) {
                                  products[productName]--;
                              }
 
-                             
                          });
 
         }
@@ -118,18 +122,31 @@ function vend(product) {
 }
 
 
-//Validate Coins - Validation happened based on weight and size
-//Returns Coin value
-function validateCoin(insertedCoin) {
-
-    for (var coin in listOfAcceptedCoins) {
-
-        if (insertedCoin.Weight == listOfAcceptedCoins[coin].Weight &&
-             insertedCoin.Size == listOfAcceptedCoins[coin].Size) //Coin Value matches our list of accepted coins
-            return listOfAcceptedCoins[coin].value;
-    }
-    return null;
+// Check if product is available
+function productAvailabilty(productName) {
+    $.post('Vending/GetProductValue', { ProductName: productName })
+        .done(function (response) {
+            if (response.ProductCount > 0)
+                return true;
+        });
+    return false;
 }
+
+
+//Reset the transaction
+function returnAllCoins() {
+    document.getElementById('collection-area').innerHTML = document.getElementById('collection-area').innerHTML + ', ' + '$' + coinSum;
+    reset();
+}
+
+//Reset the transaction
+function reset() {
+    coinsAdded = [];
+    coinSum = 0;
+    remainingBalance = 0;
+    numberOfCoins = 0;
+}
+
 
 // Refill Vending Machine
 function refillVendingMachine() {
@@ -137,14 +154,6 @@ function refillVendingMachine() {
                      .done(function (response) {
                          document.getElementById('console').html(response);
                      });
-}
-
-
-// Check if product is available
-function productAvailabilty(productName) {
-    if (products[productName] > 0)
-        return true;
-    return false;
 }
 
 
@@ -156,7 +165,7 @@ function clearCollection() {
 }
 
 
-//On document Ready - Fill the products Javascript object
+//On document Ready - Fill the products & acceptedCoins Javascript object
 (function () {
     
     var productList = document.getElementsByClassName('product');

@@ -46,7 +46,7 @@ namespace VendingMachineKata.Controllers
         /// <summary>
         /// The collection area of the vending mavchine
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Partial View</returns>
         // GET : Vending/Console
         public ActionResult GetCollection()
         {
@@ -54,8 +54,14 @@ namespace VendingMachineKata.Controllers
         }
 
 
-        //GET : Vending/GetCoinValue
+        /// <summary>
+        /// Get the coin value of the inserted coin
+        /// </summary>
+        /// <param name="Coin"></param>
+        /// <returns>Coin Value</returns>
 
+        //GET : Vending/GetCoinValue
+        [HttpGet]
         public JsonResult GetCoinValue(Coin Coin)
         {
             double CoinValue = VendingService.GetCoinValue(Coin);
@@ -63,11 +69,27 @@ namespace VendingMachineKata.Controllers
         }
 
 
+        /// <summary>
+        /// Get the Product count value of the chosen product
+        /// </summary>
+        /// <param name="ProductName"></param>
+        /// <returns>ProductCount</returns>
+
+        //GET : Vending/GetProductValue
+        [HttpGet]
+        public JsonResult GetProductCount(string ProductName)
+        {
+            int ProductCount = VendingService.GetProductCount(ProductName);
+            return Json(new { ProductCount = ProductCount });
+        }
+
+
+
         // GET : Vending/GetProducts
         /// <summary>
         /// Refill the vending machine
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Message of refill</returns>
         [HttpGet]
         public JsonResult RefillVendingMachine()
         {
