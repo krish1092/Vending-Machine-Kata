@@ -1,6 +1,4 @@
-﻿var coinInserted = false; // A boolean to know if there is a coin inserted for the current transaction
-
-var coinsAdded = []; // an array of coins to keep track of what all coins have been added
+﻿var coinsAdded = []; // an array of coins to keep track of what all coins have been added
 
 var numberOfCoins = 0; // number of coins - Just for display purpose
 
@@ -8,90 +6,114 @@ var coinSum = 0; // sum of coins added - for checking if the user has inserted e
 
 var remainingBalance = 0; //For transactions
 
-//Accepted coins
-var listOfAcceptedCoins = {
-    quarter: { weight: 20, size: 3, value: 0.25 },
-    dime: { weight: 5, size: 1, value: 0.10 },
-    nickel: { weight: 10, size: 2, value: 0.05 }
-}
+var products = {}; //Will be loaded after page is loaded
 
-//Update display based on the current state of transaction
-function updateDisplay() {
+var listOfAcceptedCoins = {}; //Accepted coins
 
-    if (coinInserted)
-        updateCustomMessage('You have inserted' + numberOfCoins + 'coins amounting to $' + coinSum);
-    else
-        updateCustomMessage('Please Insert Coins');
-
-}
 
 //Reset the transaction
 function returnAllCoins() {
+    document.getElementById('collection-area').innerHTML = document.getElementById('collection-area').innerHTML +', ' +'$' + coinSum;
+    reset();
+}
 
+//Reset the transaction
+function reset() {
     coinsAdded = [];
-    coinInserted = false;
     coinSum = 0;
     remainingBalance = 0;
     numberOfCoins = 0;
-
 }
+
 
 //Insert Coin
 function insertCoin(insertedCoin) {
-    var insertedCoinValue = validateCoin(insertedCoin);
-    if (insertedCoinValue != null) {
+    var coinSelect = document.getElementById('coin-select').selected;
+   
+    //Get the weight and size of the selected coin
+    insertedCoin = { 
+        Weight: coinSelect.options[coinSelect.selectedIndex].getAttribute('data-coin-weight') ,
+        Size : coinSelect.options[coinSelect.selectedIndex].getAttribute('data-coin-size')
+    };
 
-        coinsAdded.push(insertedCoin);
 
-        numberOfCoins++;
+    var validated = validateCoin(insertedCoin);
+    if (validated == true) {
 
-        coinInserted = true;
+        $.post('Vending/GetCoinValue', { Coin: insertedCoin })
+            .done(function (response) {
 
-        coinSum = coinSum + insertedCoin;
+                //Backend validation if user plays smart by editing the javascript file
+                if (CoinValue === 0)
+                    updateCustomMessage('Stop editing javascript - You won\'t get through anyway!');
+                else {
+
+                    coinsAdded.push(insertedCoin);
+                    numberOfCoins++;
+                    coinSum = coinSum + response.CoinValue;
+
+                    updateCustomMessage('You have inserted' + numberOfCoins + 'coins amounting to $' + coinSum);
+                }
+        });
+        
     }
     else {
-        alert('Insert Valid Coin - The ones in the list');
+        document.getElementById('console').innerHTML('Insert Valid Coin - The ones in the list');
     }
 
 }
 
 
-//Update Display For Vending
-
-function vendingDisplay(remainingBalance) {
-
-    if (remainingBalance === 0)
-        updateCustomMessage('You have tendered the exact change. Thank you!');
-    if (remainingBalance > 0)
-        updateCustomMessage('Please collect a return of $' + remainingBalance + 'Thank you!');
-    if (remainingBalance < 0)
-        updateCustomMessage('You need to pay $' + remainingBalance + 'more');
-
-}
-
-
+//Display message in console
 function updateCustomMessage(message) {
     document.getElementById('console').innerHTML = message;
 }
 
 //Calculate Balance
-function vend() {
-    var productCost = document.getElementById('product').value;
+function vend(product) {
+
+    var productCost = product.getAttribute('data-product-price');
+    var productName = product.getAttribute('data-product-name');
+
     remainingBalance = coinSum - productCost;
-    vendingDisplay(remainingBalance);
+    
+    if (productAvailabilty(productName)) {
 
-    //Ajax Call
 
-    if (remainingBalance >= 0) {
-            $.post('', { insertedCoins: coinsAdded, totalSum : coinSum })
-                     .done(function (response) {
-                        $('#console').html(response);
+        if (remainingBalance >= 0) {
 
-    });
+            //Ajax Call
+            $.post('Vending/Complete', { Coins : coinsAdded, totalSum: coinSum, productSelected: productName })
+                         .done(function (response) {
+                             if (response.Validated == true && response.RemainingAmount > 0) {
+                                 document.getElementById('console').innerHTML = 'I don\'t have sufficient change. please tender exact change';
+                                 returnAllCoins();
+                             }
+                             else if (response.Validated == false){
 
+                                 document.getElementById('console').innerHTML = 'Please tender valid coins';
+                                 returnAllCoins();
+                             }
+                             else if (response.Validated == true && response.RemainingAmount == 0) {
+                                 document.getElementById('console').innerHTML = 'Thank you for placing the order! Please collect your product';
+
+                                 //Display to the user the product in the collect area
+                                 document.getElementById('collection-area').innerHTML = document.getElementById('collection-area').innerHTML + '\n' + productName;
+
+                                 //Deduct the existing set of products
+                                 products[productName]--;
+                             }
+
+                             
+                         });
+
+        }
+        else {
+            updateCustomMessage('Please tender the full amount');
+        }
     }
     else {
-        updateCustomMessage('Please tender the full amount');
+        updateCustomMessage('Please request a refill. The product is not available for selection');
     }
 }
 
@@ -102,8 +124,8 @@ function validateCoin(insertedCoin) {
 
     for (var coin in listOfAcceptedCoins) {
 
-        if (insertedCoin.weight == listOfAcceptedCoins[coin].weight &&
-             insertedCoin.size == listOfAcceptedCoins[coin].size) //Coin Value matches our list of accepted coins
+        if (insertedCoin.Weight == listOfAcceptedCoins[coin].Weight &&
+             insertedCoin.Size == listOfAcceptedCoins[coin].Size) //Coin Value matches our list of accepted coins
             return listOfAcceptedCoins[coin].value;
     }
     return null;
@@ -111,9 +133,45 @@ function validateCoin(insertedCoin) {
 
 // Refill Vending Machine
 function refillVendingMachine() {
-    $.post('', { insertedCoins: coinsAdded, totalSum: coinSum })
+    $.post('Vending/Refill')
                      .done(function (response) {
-                         $('#console').html(response);
-
+                         document.getElementById('console').html(response);
                      });
 }
+
+
+// Check if product is available
+function productAvailabilty(productName) {
+    if (products[productName] > 0)
+        return true;
+    return false;
+}
+
+
+//Clear Collection Area 
+function clearCollection() {
+    document.getElementById('collection-area').innerHTML = '';
+    document.getElementById('console').innerHTML = 'Insert Coin';
+    reset();
+}
+
+
+//On document Ready - Fill the products Javascript object
+(function () {
+    
+    var productList = document.getElementsByClassName('product');
+    productList.forEach(function (product) {
+        products[product.getAttribute('productName')] = product.getAttribute('product-price');
+    });
+
+    var coinList = document.getElementsByClassName('coin-select');
+
+    for (var index = 0; index < coinList.length; index++)
+    {
+        listOfAcceptedCoins[coinList.options[i].text] = {
+            Size: coinList.options[i].getAttribute('data-coin-size'),
+            Weight: coinList.options[i].getAttribute('data-coin-weight')
+        };
+    }
+    
+})();

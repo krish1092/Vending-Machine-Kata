@@ -17,10 +17,10 @@ namespace VendingMachineKata.Service
         };
 
         //For Validating coins & Tendering Change- Dictionary holds the mapping of a coin and its value; Note that, the Coin Class by itself does not know the Coin's value
-        private static Dictionary<Coin, double> AcceptedCoinsDictionary = new Dictionary<Coin, double> {
-            { new Coin {Size = 3, Weight = 20, Count = 10}, 0.25 },
-            { new Coin {Size = 1, Weight = 5, Count = 10}, 0.10 },
-            { new Coin {Size = 2, Weight = 10, Count = 10}, 0.05 }
+        private static Dictionary<Coin, CoinValues> AcceptedCoinsDictionary = new Dictionary<Coin, CoinValues> {
+            { new Coin {Size = 3, Weight = 20, Name = "Quarter" }, new CoinValues { Count = 10, Value = 0.25 } },
+            { new Coin {Size = 1, Weight = 5, Name = "Dime" }, new CoinValues { Count = 10, Value = 0.10 } },
+            { new Coin {Size = 2, Weight = 10 , Name = "Nickel" }, new CoinValues { Count = 10, Value = 0.05 } }
         };
         
         /// <summary>
@@ -35,10 +35,10 @@ namespace VendingMachineKata.Service
             foreach (Coin coin in AcceptedCoinsDictionary.Keys)
             {
 
-                double CoinValue = AcceptedCoinsDictionary[coin];
+                CoinValues CoinValues = AcceptedCoinsDictionary[coin];
 
                 //Number of coins for the current coin value
-                int n = (int)(RemainingAmount / CoinValue);
+                int n = (int)(RemainingAmount / CoinValues.Value);
 
                 int i = 0;
 
@@ -46,11 +46,11 @@ namespace VendingMachineKata.Service
                 if (n > 0)
                 {
                     //Eg: This check ensures that the maximum number of coins <=n are subtracted without the coin count running negative.
-                    while (coin.Count > 0 && i < n)
+                    while (CoinValues.Count > 0 && i < n)
                     {
                         i++;
-                        coin.Count--;
-                        RemainingAmount = RemainingAmount - CoinValue; //Subtract the amount taken off
+                        CoinValues.Count--;
+                        RemainingAmount = RemainingAmount - CoinValues.Value; //Subtract the amount taken off
                     }
                 }
 
@@ -71,7 +71,8 @@ namespace VendingMachineKata.Service
             //The customer has inserted a few coins as well. Add them to the pool of coins that already exist and then tender change
             foreach (Coin Coin in coinsInserted)
             {
-                AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, Coin)).First().Count++; //Increment the corresponding coin value
+                Coin CoinInTheDictionary = AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, Coin)).First();
+                AcceptedCoinsDictionary[CoinInTheDictionary].Count++; //Increment the corresponding coin value
             }
             
         }
@@ -83,6 +84,12 @@ namespace VendingMachineKata.Service
         public static List<Product> GetProductList()
         {
             return new List<Product>(ProductDictionary.Values);
+        }
+
+
+        public static List<Coin> GetAcceptedCoins()
+        {
+            return new List<Coin>(AcceptedCoinsDictionary.Keys);
         }
 
         /// <summary>
@@ -119,6 +126,21 @@ namespace VendingMachineKata.Service
             }
             return true;
         }
+
+
+
+        /// <summary>
+        /// Get the value
+        /// </summary>
+        /// <param name="coin"></param>
+        /// <returns></returns>
+        public static double GetCoinValue(Coin coin)
+        {
+            Coin CoinInTheDictionary = AcceptedCoinsDictionary.Keys.Where(key => key.Equals(key, coin)).First();
+                    return CoinInTheDictionary == null ? 0 : AcceptedCoinsDictionary[CoinInTheDictionary].Value;
+            
+        }
+
 
     }
 }

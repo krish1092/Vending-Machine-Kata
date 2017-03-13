@@ -200,9 +200,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Coin.cs" />
+    <Compile Include="Models\CoinValues.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\VendingService.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -263,6 +265,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Vending\GetVendingMachine.cshtml" />
     <Content Include="Views\Vending\GetProducts.cshtml" />
+    <Content Include="Views\Vending\OpenVendingMachine.cshtml" />
+    <Content Include="Views\Vending\GetCoins.cshtml" />
+    <Content Include="Views\Vending\GetConsole.cshtml" />
+    <Content Include="Views\Vending\GetCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

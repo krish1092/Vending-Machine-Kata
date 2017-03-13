@@ -9,7 +9,8 @@ namespace VendingMachineKata.Models
     {
         public double Size { get; set; } //Size of the coin (Likely, Diameter)
         public double Weight { get; set; } //Weight of the coin
-        public int Count { get; set; } // Number of coins in our coin pool
+        
+        public string Name { get; set; } //Name of the coin
 
         /// <summary>
         /// Comparing two differnt coin objects

@@ -15,25 +15,55 @@ namespace VendingMachineKata.Controllers
         //Note - This is not the ideal way to store the values as these values are gone at the end of session. The correct way is to use a database 
         //but since it was not part of the requirement, I'm using static fields.
 
-        
-        [HttpGet]
-        public ActionResult GetAcceptedCoins()
+        // GET: Vending/
+        public ActionResult OpenVendingMachine()
         {
-            
-            return PartialView();
+            return View();
         }
 
-        
 
 
-
-        // GET: Product/GetProducts
+        // GET: Vending/GetProducts
         public ActionResult GetProducts()
         {
             return PartialView(VendingService.GetProductList());
         }
 
+        // GET : Vending/Console
+        public ActionResult GetConsole()
+        {
+            return PartialView();
+        }
 
+        //GET : Vending/Coins
+
+        public ActionResult GetCoins()
+        {
+            return PartialView(VendingService.GetAcceptedCoins());
+        }
+
+        
+        /// <summary>
+        /// The collection area of the vending mavchine
+        /// </summary>
+        /// <returns></returns>
+        // GET : Vending/Console
+        public ActionResult GetCollection()
+        {
+            return PartialView();
+        }
+
+
+        //GET : Vending/GetCoinValue
+
+        public JsonResult GetCoinValue(Coin Coin)
+        {
+            double CoinValue = VendingService.GetCoinValue(Coin);
+            return Json(new { CoinValue = CoinValue });
+        }
+
+
+        // GET : Vending/GetProducts
         /// <summary>
         /// Refill the vending machine
         /// </summary>
@@ -46,7 +76,7 @@ namespace VendingMachineKata.Controllers
         }
 
 
-        // POST : VendingMachine/Complete
+        // POST : Vending/Complete
         /// <summary>
         /// This method completes the vending process by adding the inserted coins to the existing coin pool ,subtracting the product count and 
         /// tenders the change
