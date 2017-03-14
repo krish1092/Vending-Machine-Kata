@@ -1,0 +1,18 @@
+﻿@model List<VendingMachineKata.Models.Product>
+
+@using VendingMachineKata.Models;
+
+<style>
+// Just an empty class useful for hierarchy
+.product{
+}
+
+</style>
+
+@foreach (Product p in @Model)
+{
+    <div class="row">
+        <h2>@p.DisplayProduct : @p.ProductPrice</h2>
+        <button onclick="vend(this)" class="btn-primary product" value="Select" data-product-name="@p.ProductName" data-product-price="@p.ProductPrice"></button>
+    </div>
+}
