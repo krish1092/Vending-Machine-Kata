@@ -1,0 +1,16 @@
+﻿@model List<VendingMachineKata.Models.Coin>
+
+@using VendingMachineKata.Models;
+
+<div class="col-md-6">
+    <select id="coin-select">
+        @foreach (Coin c in @Model)
+        {
+            <option data-coin-weight="@c.Weight" data-coin-size="@c.Size">@c.Name</option>
+        }
+    </select>
+</div>
+
+<div class="col-md-6">
+    <button onclick="insertCoin();">Insert</button>
+</div>
